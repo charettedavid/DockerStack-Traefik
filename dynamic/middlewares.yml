@@ -13,3 +13,9 @@ http:
 
     gzip:
       compress: {}
+
+    auth:
+      basicAuth:
+        users:
+          # admin / ton_mdp   (remplace par ton hash)
+          - "admin:$$apr1$$YPLNqhzL$$9vLU3qFghLRjHf6/.8zZj/"

@@ -3,20 +3,15 @@ version: "3.9"
 services:
   traefik:
     image: traefik:v3.1
-    # container_name: traefik            # ❌ Swarm: non supporté
-    # restart: unless-stopped            # ❌ Swarm: non supporté, utiliser deploy
     command:
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
-
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
-
-      - --certificatesresolvers.le.acme.email=admin@example.com
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
-
       - --api.dashboard=true
       - --log.level=INFO
 

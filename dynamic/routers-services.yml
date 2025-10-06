@@ -17,6 +17,13 @@ http:
       tls:
         certResolver: le
 
+    traefik-dashboard:
+      entryPoints: [ "websecure" ]
+      rule: "Host(`traefik.fullstack-dev.com`)"
+      service: "api@internal"
+      tls:
+        certResolver: "le"
+      middlewares: [ "auth", "hsts" ]
     
 
   services:
