@@ -7,7 +7,7 @@ services:
       - "80:80"
       - "443:443"
     command:
-      # Entrées HTTP/HTTPS
+      # EntrÃ©es HTTP/HTTPS
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
 
@@ -26,9 +26,9 @@ services:
       - --api.dashboard=true
 
     volumes:
-      # Volume nommé pour persister les certificats ACME
+      # Volume nommÃ© pour persister les certificats ACME
       - traefik_letsencrypt:/letsencrypt
-      # Volume nommé pour stocker la configuration dynamique
+      # Volume nommÃ© pour stocker la configuration dynamique
       - traefik_dynamic:/etc/traefik/dynamic
 
     environment:

@@ -1,6 +1,6 @@
 http:
   routers:
-    # === Redirection globale HTTP -> HTTPS (tous hÙtes) ===
+    # === Redirection globale HTTP -> HTTPS (tous h√¥tes) ===
     http-catchall:
       entryPoints: [ web ]
       rule: HostRegexp(`{any:.+}`)
