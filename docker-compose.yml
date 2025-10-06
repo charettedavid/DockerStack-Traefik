@@ -1,0 +1,42 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"    # HTTP (validation ACME HTTP-01 + redirection)
+      - "443:443"  # HTTPS
+    command:
+      # Entrées
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
+
+      # Provider "file" pour la config dynamique (monté ci-dessous)
+      - --providers.file.directory=/etc/traefik/dynamic
+      - --providers.file.watch=true
+
+      # ACME Let's Encrypt - HTTP-01 (aucun changement DNS requis)
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      - --certificatesresolvers.le.acme.httpchallenge=true
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+
+      # Logs
+      - --log.level=INFO
+
+      # (Option si port 80 bloqué par ton FAI : utilise TLS-ALPN-01)
+      # - --certificatesresolvers.le.acme.tlschallenge=true
+
+      # (Option: dashboard interne uniquement ; ajoute un router si tu veux l'exposer)
+      - --api.dashboard=true
+    volumes:
+      - ./letsencrypt:/letsencrypt              # persistance des certs
+      - ./dynamic:/etc/traefik/dynamic          # tes fichiers dynamiques
+    environment:
+      - TZ=America/Toronto
+    networks:
+      - edge
+
+networks:
+  edge:
+    driver: bridge

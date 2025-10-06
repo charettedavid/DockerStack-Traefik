@@ -1,0 +1,34 @@
+http:
+  routers:
+    # === Redirection globale HTTP -> HTTPS (tous hôtes) ===
+    http-catchall:
+      entryPoints: [ web ]
+      rule: HostRegexp(`{any:.+}`)
+      middlewares: [ redirect-https ]
+      service: noop
+
+    # === FULLSTACK-DEV.COM ===
+    # www.fullstack-dev.com -> site IIS (port 80)
+    fullstack_www:
+      entryPoints: [ websecure ]
+      rule: Host(`cd.fullstack-dev.com`)
+      service: svc_fullstack_cd
+      middlewares: [ gzip, hsts ]
+      tls:
+        certResolver: le
+
+    
+
+  services:
+    # === Cibles IIS pour FULLSTACK-DEV ===
+    svc_fullstack_cd:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://192.168.8.143:501"
+
+    # Service bidon pour la redirection HTTP->HTTPS
+    noop:
+      loadBalancer:
+        servers:
+          - url: "http://127.0.0.1"
