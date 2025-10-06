@@ -27,7 +27,10 @@ services:
         published: 443
         protocol: tcp
         mode: host
-      - "9099:9099"
+      - target: 9099
+        published: 9099
+        protocol: tcp
+        mode: host
 
     volumes:
       - traefik_letsencrypt:/letsencrypt
