@@ -1,45 +1,6 @@
+# stack: hello
 services:
-  traefik:
-    image: traefik:v3.1
-    container_name: traefik
-    restart: unless-stopped
+  whoami:
+    image: traefik/whoami
     ports:
-      - "80:80"
-      - "443:443"
-    command:
-      # Entrées HTTP/HTTPS
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-
-      # Provider file (config dynamique)
-      - --providers.file.directory=/etc/traefik/dynamic
-      - --providers.file.watch=true
-
-      # ACME Let's Encrypt (HTTP-01)
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
-      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.le.acme.httpchallenge=true
-      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
-
-      # Logs & dashboard
-      - --log.level=INFO
-      - --api.dashboard=true
-
-    volumes:
-      # Volume nommé pour persister les certificats ACME
-      - traefik_letsencrypt:/letsencrypt
-      # Volume nommé pour stocker la configuration dynamique
-      - traefik_dynamic:/etc/traefik/dynamic
-
-    environment:
-      - TZ=America/Toronto
-    networks:
-      - edge
-
-volumes:
-  traefik_letsencrypt:
-  traefik_dynamic:
-
-networks:
-  edge:
-    driver: bridge
+      - "8088:80"
