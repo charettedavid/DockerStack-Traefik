@@ -4,6 +4,7 @@ services:
   traefik:
     image: traefik:v3.1
     command:
+      - --entrypoints.traefik.address=:9090
       - --entrypoints.web.address=:888
       - --entrypoints.websecure.address=:444
       - --providers.file.directory=/etc/traefik/dynamic
@@ -26,6 +27,7 @@ services:
         published: 443
         protocol: tcp
         mode: host
+      - "9090:9090"
 
     volumes:
       - traefik_letsencrypt:/letsencrypt
