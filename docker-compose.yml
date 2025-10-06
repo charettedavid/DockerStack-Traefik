@@ -1,45 +1,57 @@
+version: "3.9"
+
 services:
   traefik:
     image: traefik:v3.1
-    container_name: traefik
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
+    # container_name: traefik            # ❌ Swarm: non supporté
+    # restart: unless-stopped            # ❌ Swarm: non supporté, utiliser deploy
     command:
-      # Entrées HTTP/HTTPS
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
 
-      # Provider file (config dynamique)
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
 
-      # ACME Let's Encrypt (HTTP-01)
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.email=admin@example.com
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
 
-      # Logs & dashboard
-      - --log.level=INFO
       - --api.dashboard=true
+      - --log.level=INFO
+
+    ports:
+      # Swarm publie via le routing mesh. Pour des perfs ou si tu veux bypass le mesh,
+      # utilise 'mode: host' comme ci-dessous.
+      - target: 80
+        published: 80
+        protocol: tcp
+        mode: host
+      - target: 443
+        published: 443
+        protocol: tcp
+        mode: host
 
     volumes:
-      # Volume nommé pour persister les certificats ACME
       - traefik_letsencrypt:/letsencrypt
-      # Volume nommé pour stocker la configuration dynamique
       - traefik_dynamic:/etc/traefik/dynamic
 
-    environment:
-      - TZ=America/Toronto
     networks:
       - edge
 
+    deploy:
+      replicas: 1                    # ACME: 1 seule réplique (un seul stockage de certs)
+      restart_policy:
+        condition: any
+      placement:
+        constraints:
+          - node.role == manager     # optionnel: place sur un manager
+
 volumes:
-  traefik_letsencrypt:
-  traefik_dynamic:
+  traefik_letsencrypt: {}
+  traefik_dynamic: {}
 
 networks:
   edge:
-    driver: bridge
+    driver: overlay                  # ✅ Swarm: overlay obligatoire
+    attachable: true
