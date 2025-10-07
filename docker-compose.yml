@@ -5,14 +5,15 @@ services:
     image: traefik:v3.1
     command:
       - --entrypoints.traefik.address=:9099
-      - --entrypoints.web.address=:80
+      - --entrypoints.web.address=:80      
+      - --entrypoints.web2.address=:81      
       - --entrypoints.websecure.address=:443
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
       - --certificatesresolvers.le.acme.email=${ACME_EMAIL}  
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
-      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web2
       - --api.dashboard=true
       - --api.insecure=true      
       - --log.level=INFO
@@ -20,6 +21,10 @@ services:
     ports:
       - target: 80
         published: 80
+        protocol: tcp
+        mode: host
+      - target: 81
+        published: 81
         protocol: tcp
         mode: host
       - target: 443
