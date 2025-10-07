@@ -9,17 +9,13 @@ services:
       - --entrypoints.websecure.address=:443
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}
+      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}  
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
       - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
       - --api.dashboard=true
-      - --api.insecure=true
       - --log.level=INFO
-
     ports:
-      # Swarm publie via le routing mesh. Pour des perfs ou si tu veux bypass le mesh,
-      # utilise 'mode: host' comme ci-dessous.
       - target: 80
         published: 80
         protocol: tcp
@@ -32,27 +28,31 @@ services:
         published: 9099
         protocol: tcp
         mode: host
-
     volumes:
-      - traefik_letsencrypt:/letsencrypt
-      - traefik_dynamic:/etc/traefik/dynamic
-
-    networks:
-      - edge
-
+      - traefik_letsencrypt:/letsencrypt   # <-- on garde seulement ACME en volume
+    configs:
+      - source: traefik_middlewares
+        target: /etc/traefik/dynamic/middlewares.yml
+      - source: traefik_routes
+        target: /etc/traefik/dynamic/routers-services.yml
+    networks: [ edge ]
     deploy:
-      replicas: 1                    # ACME: 1 seule réplique (un seul stockage de certs)
-      restart_policy:
-        condition: any
+      replicas: 1
+      restart_policy: { condition: any }
       placement:
         constraints:
-          - node.role == manager     # optionnel: place sur un manager
+          - node.role == manager
 
 volumes:
   traefik_letsencrypt: {}
-  traefik_dynamic: {}
+
+configs:
+  traefik_middlewares:
+    file: ./dynamic/middlewares.yml
+  traefik_routes:
+    file: ./dynamic/routers-services.yml
 
 networks:
   edge:
-    driver: overlay                  # ✅ Swarm: overlay obligatoire
+    driver: overlay
     attachable: true
