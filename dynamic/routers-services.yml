@@ -29,9 +29,9 @@ http:
       entryPoints: [ "websecure" ]
       rule: "HostRegexp(`{subdomain:.+}.eboutique.asdpromo.com`)"
       service: "svc_eboutique_iis"
-      middlewares: [ "gzip", "hsts" ]
       tls:
         certResolver: "le"
+      middlewares: [ "gzip", "hsts" ]
 
   services:
     # === Cibles IIS pour FULLSTACK-DEV ===
