@@ -5,8 +5,8 @@ services:
     image: traefik:v3.1
     command:
       - --entrypoints.traefik.address=:9099
-      - --entrypoints.web.address=:888
-      - --entrypoints.websecure.address=:444
+      - --entrypoints.web.address=:80
+      - --entrypoints.websecure.address=:443
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
       - --certificatesresolvers.le.acme.email=${ACME_EMAIL}  
@@ -16,12 +16,12 @@ services:
       - --api.dashboard=true
       - --log.level=INFO
     ports:
-      - target: 888
-        published: 888
+      - target: 80
+        published: 80
         protocol: tcp
         mode: host
-      - target: 444
-        published: 444
+      - target: 443
+        published: 443
         protocol: tcp
         mode: host
       - target: 9099
