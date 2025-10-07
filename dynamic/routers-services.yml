@@ -24,7 +24,14 @@ http:
       tls:
         certResolver: "le"
       middlewares: [ "auth", "hsts" ]
-    
+
+    eboutique_wildcard:
+      entryPoints: [ "websecure" ]
+      rule: "HostRegexp(`{subdomain:.+}.eboutique.asdpromo.com`)"
+      service: "svc_eboutique_iis"
+      middlewares: [ "gzip", "hsts" ]
+      tls:
+        certResolver: "le"
 
   services:
     # === Cibles IIS pour FULLSTACK-DEV ===
@@ -32,7 +39,13 @@ http:
       loadBalancer:
         passHostHeader: true
         servers:
-          - url: "http://192.168.8.143:501"
+          - url: "https://win-cm1c9g1gt4m:501"
+
+    svc_eboutique_iis:
+      loadBalancer:
+        passHostHeader: true         # ✅ conserve le Host original
+        servers:
+          - url: "https://win-cm1c9g1gt4m"   # ✅ URL de ton IIS interne (port 80 ou autre)
 
     # Service bidon pour la redirection HTTP->HTTPS
     noop:
