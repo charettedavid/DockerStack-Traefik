@@ -32,9 +32,9 @@ services:
     volumes:
       - traefik_letsencrypt:/letsencrypt   # <-- on garde seulement ACME en volume
     configs:
-      - source: traefik_middlewares
+      - source: traefik_middlewares_v2
         target: /etc/traefik/dynamic/middlewares.yml
-      - source: traefik_routes
+      - source: traefik_routes_v2
         target: /etc/traefik/dynamic/routers-services.yml
     networks: [ edge ]
     deploy:
@@ -48,9 +48,9 @@ volumes:
   traefik_letsencrypt: {}
 
 configs:
-  traefik_middlewares:
+  traefik_middlewares_v2:
     file: ./dynamic/middlewares.yml
-  traefik_routes:
+  traefik_routes_v2:
     file: ./dynamic/routers-services.yml
 
 networks:
