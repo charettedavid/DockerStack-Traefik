@@ -7,16 +7,6 @@ http:
       middlewares: [ redirect-https ]
       service: noop
 
-    # === FULLSTACK-DEV.COM ===
-    # www.fullstack-dev.com -> site IIS (port 80)
-    fullstack_www:
-      entryPoints: [ websecure ]
-      rule: Host(`cd.fullstack-dev.com`)
-      service: svc_fullstack_cd
-      middlewares: [ gzip, hsts ]
-      tls:
-        certResolver: le
-
     traefik-dashboard:
       entryPoints: [ "websecure" ]
       rule: "Host(`traefik.fullstack-dev.com`)"
@@ -25,27 +15,20 @@ http:
         certResolver: "le"
       middlewares: [ "auth", "hsts" ]
 
-    eboutique_wildcard:
+    fullstack_wildcard:
       entryPoints: [ "websecure" ]
-      rule: "HostRegexp(`{subdomain:.+}.eboutique.asdpromo.com`)"
-      service: "svc_eboutique_iis"
+      rule: "HostRegexp(`{subdomain:.+}.fullstack-dev.com`)"
+      service: "fullstack_wildcard"
       tls:
         certResolver: "le"
       middlewares: [ "gzip", "hsts" ]
 
   services:
-    # === Cibles IIS pour FULLSTACK-DEV ===
-    svc_fullstack_cd:
-      loadBalancer:
-        passHostHeader: true
-        servers:
-          - url: "https://win-cm1c9g1gt4m:501"
-
-    svc_eboutique_iis:
+    fullstack_wildcard:
       loadBalancer:
         passHostHeader: true         # ✅ conserve le Host original
         servers:
-          - url: "https://win-cm1c9g1gt4m"   # ✅ URL de ton IIS interne (port 80 ou autre)
+          - url: "http://192.168.8.143"   # ✅ URL de ton IIS interne (port 80 ou autre)
 
     # Service bidon pour la redirection HTTP->HTTPS
     noop:

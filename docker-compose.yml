@@ -6,7 +6,6 @@ services:
     command:
       - --entrypoints.traefik.address=:9099
       - --entrypoints.web.address=:80      
-      - --entrypoints.web2.address=:81      
       - --entrypoints.websecure.address=:443
       - --providers.file.directory=/etc/traefik/dynamic
       - --providers.file.watch=true
@@ -23,10 +22,6 @@ services:
         published: 80
         protocol: tcp
         mode: host
-      - target: 81
-        published: 81
-        protocol: tcp
-        mode: host
       - target: 443
         published: 443
         protocol: tcp
@@ -38,9 +33,9 @@ services:
     volumes:
       - traefik_letsencrypt:/letsencrypt   # <-- on garde seulement ACME en volume
     configs:
-      - source: traefik_middlewares_v2
+      - source: traefik_middlewares_v3
         target: /etc/traefik/dynamic/middlewares.yml
-      - source: traefik_routes_v2
+      - source: traefik_routes_v3
         target: /etc/traefik/dynamic/routers-services.yml
     networks: [ edge ]
     deploy:
@@ -54,9 +49,9 @@ volumes:
   traefik_letsencrypt: {}
 
 configs:
-  traefik_middlewares_v2:
+  traefik_middlewares_v3:
     file: ./dynamic/middlewares.yml
-  traefik_routes_v2:
+  traefik_routes_v3:
     file: ./dynamic/routers-services.yml
 
 networks:
