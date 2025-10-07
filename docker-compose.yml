@@ -12,7 +12,7 @@ services:
       - --certificatesresolvers.le.acme.email=${ACME_EMAIL}  
       - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
       - --certificatesresolvers.le.acme.httpchallenge=true
-      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web2
+      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
       - --api.dashboard=true
       - --api.insecure=true      
       - --log.level=INFO
