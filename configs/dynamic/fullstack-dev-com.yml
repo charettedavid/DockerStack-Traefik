@@ -1,7 +1,7 @@
 http:
   routers:
     https-test-only:
-      rule: "Host(`www.fullstack-dev.com`) || Host(`ship-ctg.fullstack-dev.com`) || Host(`energirship.fullstack-dev.com`) || Host(`ASDBoutiqueSaasEricShip.fullstack-dev.com`) || Host(`cd.fullstack-dev.com`) || Host(`cbhssjb.fullstack-dev.com`) || Host(`distech-ship.fullstack-dev.com`) || Hos>
+      rule: "Host(`www.fullstack-dev.com`) || Host(`ship-ctg.fullstack-dev.com`) || Host(`energirship.fullstack-dev.com`) || Host(`ASDBoutiqueSaasEricShip.fullstack-dev.com`) || Host(`cd.fullstack-dev.com`) || Host(`cbhssjb.fullstack-dev.com`) || Host(`distech-ship.fullstack-dev.com`) || Host(`imagenexx.fullstack-dev.com`) || Host(`intermat.fullstack-dev.com`) || Host(`make-api.fullstack-dev.com`) || Host(`spectrapremium.fullstack-dev.com`) || Host(`spectrapremium-us.fullstack-dev.com`) || Host(`services.fullstack-dev.com`)"
       entryPoints: ["websecure"]
       service: iis
       tls:
