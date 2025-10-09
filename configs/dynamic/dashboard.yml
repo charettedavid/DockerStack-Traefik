@@ -1,0 +1,23 @@
+http:
+  routers:
+    traefik:
+      rule: Host(`traefik.fullstack-dev.com`)
+      entryPoints:
+        - websecure
+      service: api@internal
+      middlewares:
+        - dashboardauth
+      tls:
+        certResolver: letsencrypt
+    traefik-http-redirect:
+      rule: Host(`traefik.fullstack-dev.com`)
+      entryPoints:
+        - web
+      service: api@internal
+      middlewares:
+        - "redirect-to-https"
+  middlewares:
+    dashboardauth:
+      basicAuth:
+        users:
+          - "admin:$2y$10$xkEM5S6xmWSRbJlqTrPtg.pYhWc1rYMj.1De/2STcc5YGkWZios0G"

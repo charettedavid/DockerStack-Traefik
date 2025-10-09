@@ -1,0 +1,14 @@
+http:
+  routers:
+    https-costume-route:
+      rule: "Host(`costumesenfolie.ca`) || Host(`lescostumesenfolie.ca`) || Host(`www.lescostumesenfolie.ca`) || Host(`www.costumesenfolie.ca`)"
+      entryPoints: ["websecure"]
+      service: iis-costume
+      tls:
+        certResolver: letsencrypt
+  services:
+    iis-costume:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://192.168.8.143:80"

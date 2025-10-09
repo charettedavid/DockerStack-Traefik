@@ -1,0 +1,14 @@
+http:
+  routers:
+    https-test-only:
+      rule: "Host(`www.fullstack-dev.com`) || Host(`ship-ctg.fullstack-dev.com`) || Host(`energirship.fullstack-dev.com`) || Host(`ASDBoutiqueSaasEricShip.fullstack-dev.com`) || Host(`cd.fullstack-dev.com`) || Host(`cbhssjb.fullstack-dev.com`) || Host(`distech-ship.fullstack-dev.com`) || Hos>
+      entryPoints: ["websecure"]
+      service: iis
+      tls:
+        certResolver: letsencrypt
+  services:
+    iis:
+      loadBalancer:
+        passHostHeader: true
+        servers:
+          - url: "http://192.168.8.143:80"

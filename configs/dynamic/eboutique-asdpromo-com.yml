@@ -1,0 +1,15 @@
+tcp:
+  routers:
+    eboutique-passthrough:
+      # Toutes les requêtes TLS dont le SNI matche *.eboutique.asdpromo.com
+      rule: "HostSNI(`eboutique.asdpromo.com`) || HostSNI(`energir.eboutique.asdpromo.com`) || HostSNI(`sherweb.eboutique.asdpromo.com`) || HostSNI(`sherweblife.eboutique.asdpromo.com`) || HostSNI(`sherwebship.eboutique.asdpromo.com`) || HostSNI(`norea.eboutique.asdpromo.com`) || HostSNI(`pc>
+      entryPoints: ["websecure"]
+      service: iis443
+      tls:
+        passthrough: true
+
+  services:
+    iis443:
+      loadBalancer:
+        servers:
+          - address: "192.168.8.143:443"

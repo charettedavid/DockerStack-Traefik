@@ -1,60 +1,24 @@
-version: "3.9"
-
+networks:
+  routing:
+    driver: bridge
 services:
   traefik:
-    image: traefik:v3.1
-    command:
-      - --entrypoints.traefik.address=:9099
-      - --entrypoints.web.address=:80      
-      - --entrypoints.websecure.address=:443
-      - --providers.file.directory=/etc/traefik/dynamic
-      - --providers.file.watch=true
-      - --certificatesresolvers.le.acme.email=${ACME_EMAIL}  
-      - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.le.acme.httpchallenge=true
-      - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
-      - --api.dashboard=true
-      - --api.insecure=true      
-      - --log.level=INFO
-      - --accesslog=true
+    image: traefik:v3.1.2
+    restart: always
+    container_name: reverse_proxy_traefik
     ports:
-      - target: 80
-        published: 80
-        protocol: tcp
-        mode: host
-      - target: 443
-        published: 443
-        protocol: tcp
-        mode: host
-      - target: 9099
-        published: 9099
-        protocol: tcp
-        mode: host
+      - "80:80"
+      - "443:443"
     volumes:
-      - traefik_letsencrypt:/letsencrypt   # <-- on garde seulement ACME en volume
-    configs:
-      - source: traefik_middlewares_v3
-        target: /etc/traefik/dynamic/middlewares.yml
-      - source: traefik_routes_v3
-        target: /etc/traefik/dynamic/routers-services.yml
-    networks: [ edge ]
-    deploy:
-      replicas: 1
-      restart_policy: { condition: any }
-      placement:
-        constraints:
-          - node.role == manager
-
-volumes:
-  traefik_letsencrypt: {}
-
-configs:
-  traefik_middlewares_v3:
-    file: ./dynamic/middlewares.yml
-  traefik_routes_v3:
-    file: ./dynamic/routers-services.yml
-
-networks:
-  edge:
-    driver: overlay
-    attachable: true
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./configs/traefik.yml:/etc/traefik/traefik.yml
+      - ./configs/dynamic:/etc/traefik/dynamic
+      - ./certificates/acme.json:/etc/traefik/acme/acme.json
+    healthcheck:
+      test: [ "CMD", "traefik", "healthcheck", "--ping" ]
+      interval: 5s
+      timeout: 1s
+      retries: 3
+      start_period: 10s
+    networks:
+      - routing
